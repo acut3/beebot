@@ -1,0 +1,36 @@
+[package]
+name = "beebot"
+version = "0.1.0"
+authors = ["Nicolas Christin <nic.christin@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yaml-rust = "0.4"
+base64 = "0.13.0"
+jsonwebtoken = "7"
+serde = "1"
+serde_json = "1"
+chrono = "0.4"
+lettre = "0.10.0-alpha.4"
+
+[dependencies.tokio]
+version = "0.2"
+features = [
+    "macros",
+]
+
+[dependencies.serenity]
+version = "0.9"
+default-features = false
+features = [
+    "client",
+    "gateway",
+    "cache",
+    "http",
+    "rustls_backend",
+    "model",
+    "framework",
+    "standard_framework",
+]

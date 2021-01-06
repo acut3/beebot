@@ -1,0 +1,44 @@
+# Our bot's secret token, taken from
+# https://discord.com/developers/applications/:id/bot
+token: 
+
+# Lifetime of bot-issued JWTs, in minutes.
+# Default: 60
+jwt_lifetime: 60
+
+# The secret key used to sign our JWTs, in base64.
+#
+# Since HS512 is used and because sha512 has a bloc size of 1024 bits, a random
+# key of 128 bytes is advised for maxium security. One can be generated using
+# the following command: 
+#
+# openssl rand -base64 128 | tr -d '\n'
+#
+jwt_key: 
+
+# SMTP server & account used send emails.
+# For Gmail, you would create an app password in your Google Account ->
+# Security -> Signing in to Google -> App passwords
+smtp:
+  host: smtp.gmail.com
+  port: 465
+  user: 
+  password: 
+
+# Note that ids are defined as strings rather than integers. This is because
+# Discord uses unsigned 64-bit integers for ids, whereas the yaml-rust crate
+# uses signed 64-bit integers for numbers.
+guilds:
+
+  - id: "111111111111111111"  # Guild ID #1
+
+    # This section contains a list of email files and their associated roles.
+    # An email file simply contains a list of emails, one per line.
+    grants:
+      - emails: user_group_1.db
+        roles:
+          - "222222222222222222"  # Role ID #1
+          - "333333333333333333"  # Role ID #2
+      - emails: user_group_2.db
+        roles:
+          - "444444444444444444"  # Role ID #3
