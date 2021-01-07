@@ -10,7 +10,7 @@ const ROOT_DIR: &str = ".config/beebot";
 const CFG_FILE: &str = "config.yaml";
 
 
-#[derive(Debug)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Config {
     pub root_dir: String,
     pub token: String,
@@ -20,8 +20,7 @@ pub struct Config {
     pub guilds: Vec<Guild>,
 }
 
-
-#[derive(Debug)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Smtp {
     pub host: String,
     pub port: u16,
@@ -29,15 +28,13 @@ pub struct Smtp {
     pub password: String,
 }
 
-
-#[derive(Debug)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Guild {
     pub id: u64,
     pub grants: Vec<Grant>,
 }
 
-
-#[derive(Debug)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Grant {
     pub emails: String,
     pub roles: Vec<u64>,
