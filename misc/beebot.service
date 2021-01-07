@@ -1,0 +1,15 @@
+[Unit]
+Description=The BeeBot Discord Bot
+After=network.target remote-fs.target nss-lookup.target
+Documentation=https://github.com/acut3/beebot
+
+[Service]
+Type=simple
+ExecStart=/home/beebot/bin/beebot
+User=beebot
+Group=beebot
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
