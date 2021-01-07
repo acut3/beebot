@@ -11,6 +11,7 @@ use crate::email::*;
 use std::collections::HashSet;
 
 use serenity::{
+    async_trait,
     prelude::{
         TypeMapKey,
     },
@@ -34,9 +35,11 @@ use serenity::{
     },  
     model::prelude::{
         Message,
+        GuildId,
         UserId,
         RoleId,
         PartialGuild,
+        Member,
     }
 };
 
@@ -46,7 +49,7 @@ use serenity::{
 struct General;
 
 struct Handler;
-impl EventHandler for Handler {}
+//impl EventHandler for Handler {}
 
 struct DataConfig;
 impl TypeMapKey for DataConfig {
@@ -56,6 +59,30 @@ impl TypeMapKey for DataConfig {
 struct DataGrants;
 impl TypeMapKey for DataGrants {
     type Value = Grants;
+}
+
+
+#[async_trait]
+impl EventHandler for Handler {
+
+    // Called when a new member joins a Guild
+    async fn guild_member_addition(&self, ctx: Context, _guild_id: GuildId, new_member: Member) {
+        // Send DM with instructions after a 10 second delay, so it doesn't go
+        // unnoticed
+        tokio::time::delay_for(tokio::time::Duration::new(10, 0)).await;
+        if let Err(e) = new_member.user.direct_message(&ctx.http, |m| {
+            m.content("\
+Bienvenue sur le discord d'Echirolles Triathlon !
+Afin d'obtenir l'accès aux différents salons, tu peux utiliser la command `!iam <email>` avec l'adresse mail que tu as donné au club lors de ton inscription. Par example :
+```
+!iam vincent.luis@example.com
+```");
+            m
+        }).await {
+            println!("Error sending direct message: {}", e);
+        };
+    }
+
 }
 
 
