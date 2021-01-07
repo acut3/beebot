@@ -24,8 +24,13 @@ pub fn load_grants(cfg: &Config) -> Grants {
         for cfg_grant in &cfg_guild.grants {
             for cfg_email in load_emails(cfg, &cfg_grant.emails) {
                 let guilds = grants.entry(cfg_email).or_insert(HashMap::new());
-                let roles = guilds.entry(cfg_guild.id.clone()).or_insert(Vec::new());
-                roles.append(&mut cfg_grant.roles.clone());
+                let roles = guilds.entry(cfg_guild.id).or_insert(Vec::new());
+                for role in cfg_grant.roles.iter() {
+                    // Only add role if it's not already listed
+                    if roles.iter().find(|&&x| x == *role).is_none() {
+                        roles.push(*role);
+                    }
+                }
             }
         }
     }
