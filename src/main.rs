@@ -108,7 +108,7 @@ async fn my_help(
 #[command]
 async fn about(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.say(&ctx.http,
-                       format!("beebot version {}\nhttps://github.com/acut3/beebot",
+                       format!("beebot version {}\n<https://github.com/acut3/beebot>",
                                VERSION))
         .await?;
     Ok(())
