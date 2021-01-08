@@ -44,8 +44,12 @@ use serenity::{
 };
 
 
+// Dynamically-generated version information
+include!(concat!(env!("OUT_DIR"), "/version.rs"));
+
+
 #[group]
-#[commands(iam, grant)]
+#[commands(about, iam, grant)]
 struct General;
 
 struct Handler;
@@ -96,6 +100,17 @@ async fn my_help(
     owners: HashSet<UserId>
 ) -> CommandResult {
     let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
+    Ok(())
+}
+
+
+// !about
+#[command]
+async fn about(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.channel_id.say(&ctx.http,
+                       format!("beebot version {}\nhttps://github.com/acut3/beebot",
+                               VERSION))
+        .await?;
     Ok(())
 }
 
