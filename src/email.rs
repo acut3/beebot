@@ -27,7 +27,7 @@ pub fn send_email(cfg: &Config, to: &str, jwt: &str) -> Result<(), String> {
         .singlepart(
             SinglePart::builder()
                 .header(header::ContentType("text/plain; charset=utf8".parse().unwrap()))
-                .body(format!("Envoie (copie/colle) la command suivante au bot dans un message privé:\n\n!grant {}\n\nAttention ! Bien qu'il ne contienne aucunes données personnelles ou confidentielles, ce token ne doit pas être partagé. Ne l'envoie pas sur un salon public !", jwt)))
+                .body(format!("Envoie (copie/colle) la command suivante au bot dans un message privé :\n\n!grant {}\n\nAttention ! Bien qu'il ne contienne aucunes données personnelles ou confidentielles, ce token ne doit pas être partagé. Ne l'envoie pas sur un salon public !", jwt)))
         .unwrap();
 
     let mailer = match SmtpTransport::relay(&cfg.smtp.host) {
