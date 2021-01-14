@@ -21,16 +21,18 @@ use serenity::{
         EventHandler
     },
     framework::standard::{
-        StandardFramework,
-        CommandGroup,
-        CommandResult,
         help_commands,
         Args,
+        CommandGroup,
+        CommandResult,
+        DispatchError,
         HelpOptions,
+        StandardFramework,
         macros::{
             command,
             group,
-            help
+            help,
+            hook,
         },
     },  
     model::prelude::{
@@ -80,7 +82,8 @@ Bienvenue sur le discord d'Echirolles Triathlon !
 Afin d'obtenir l'accès aux différents salons, tu peux utiliser la command `!iam <email>` avec l'adresse mail que tu as donné au club lors de ton inscription. Par example :
 ```
 !iam vincent.luis@example.com
-```");
+```
+Cette commande doit m'être envoyée en DM");
             m
         }).await {
             println!("Error sending direct message: {}", e);
@@ -92,15 +95,41 @@ Afin d'obtenir l'accès aux différents salons, tu peux utiliser la command `!ia
 
 #[help]
 async fn my_help(
-    context: &Context,
+    ctx: &Context,
     msg: &Message,
     args: Args,
     help_options: &'static HelpOptions,
     groups: &[&'static CommandGroup],
     owners: HashSet<UserId>
 ) -> CommandResult {
-    let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
+    let _ = help_commands::with_embeds(ctx, msg, args, help_options, groups, owners).await;
     Ok(())
+}
+
+
+#[hook]
+async fn dispatch_error_hook(ctx: &Context, msg: &Message, error: DispatchError) {
+    match error {
+
+        DispatchError::OnlyForDM => {
+            let _ = msg.delete(&ctx.http).await;
+            let _ = msg.channel_id.say(&ctx, format!("<@{}> j'ai supprimé ton message, cette commande ne peut être envoyée qu'en DM", msg.author.id.as_u64())).await;
+            let _ = msg.author.direct_message(&ctx.http, |m| {
+                m.content(format!("\
+Tu as envoyé la commande suivante sur <#{chan}>:
+```
+{msg}
+```
+Pour des raisons de sécurité et de confidentialité, cette commande ne peut être envoyée qu'en DM (Direct Message). J'ai supprimé ton message sur <#{}>, mais tu peux me le renvoyer ici.",
+                    chan=msg.channel_id.as_u64(), msg=msg.content
+                ));
+                m
+            }).await;
+        },
+
+        _ => (),
+
+    }
 }
 
 
@@ -119,7 +148,7 @@ async fn about(ctx: &Context, msg: &Message) -> CommandResult {
 #[command]
 #[only_in(dm)]
 #[usage("<email>")]
-#[example("jean.martin@example.com")]
+#[example("vincent.luis@example.com")]
 async fn iam(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let response;
     let email = args.rest();
@@ -198,7 +227,8 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("!"))
         .group(&GENERAL_GROUP)
-        .help(&MY_HELP);
+        .help(&MY_HELP)
+        .on_dispatch_error(dispatch_error_hook);
 
     let mut client = Client::builder(&cfg.token)
         .event_handler(Handler)
