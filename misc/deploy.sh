@@ -20,17 +20,20 @@
 BEEBOT_USER="beebot"
 
 TARGET=$1
-
 [[ "$TARGET" ]] || {
     echo "Usage: `basename $0` [user@]host" >&2
     exit 1
 }
 
-# Extract host from target
-TARGET_HOST=${1##*@}
+# cd to the top of the current repo
+REPO_ROOT=`git rev-parse --show-toplevel` || exit 1
+cd $REPO_ROOT
 
 # Build a release binary
 cargo build --release || exit 1
+
+# Extract host from target
+TARGET_HOST=${1##*@}
 
 # rm before scp since the text will usually be in use, preventing overwrites
 ssh "$BEEBOT_USER@$TARGET_HOST" rm bin/beebot || exit 1
