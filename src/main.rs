@@ -225,7 +225,9 @@ async fn main() {
     println!("grants: {:?}", grants);
 
     let framework = StandardFramework::new()
-        .configure(|c| c.prefix("!"))
+        .configure(|c| c
+            .with_whitespace(true)
+            .prefix("!"))
         .group(&GENERAL_GROUP)
         .help(&MY_HELP)
         .on_dispatch_error(dispatch_error_hook);
